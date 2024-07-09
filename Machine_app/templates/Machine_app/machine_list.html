@@ -1,0 +1,31 @@
+{% extends "Machine_app/base.html" %}
+{% block content %}
+<h2>لیست دستگاه‌ها</h2>
+<a href="{% url 'machine_create' %}" class="btn btn-primary mb-3">ثبت دستگاه جدید</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>کد دستگاه</th>
+            <th>نام دستگاه</th>
+            <th>نوع دستگاه</th>
+            <th>وضعیت</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for machine in machines %}
+        <tr>
+            <td>{{ machine.code }}</td>
+            <td>{{ machine.name }}</td>
+            <td>{{ machine.get_type_display }}</td>
+            <td>{% if machine.is_active %}فعال{% else %}غیرفعال{% endif %}</td>
+            <td>
+                <a href="{% url 'machine_detail' machine.pk %}" class="btn btn-info btn-sm">مشاهده</a>
+                <a href="{% url 'machine_update' machine.pk %}" class="btn btn-warning btn-sm">ویرایش</a>
+                <a href="{% url 'machine_delete' machine.pk %}" class="btn btn-danger btn-sm">حذف</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

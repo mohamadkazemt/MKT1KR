@@ -1,0 +1,49 @@
+{% extends "Machine_app/base.html" %}
+{% block content %}
+<h2>پروفایل دستگاه - {{ machine.name }}</h2>
+<p>کد دستگاه: {{ machine.code }}</p>
+<p>نوع دستگاه: {{ machine.get_type_display }}</p>
+<p>وضعیت: {% if machine.is_active %}فعال{% else %}غیرفعال{% endif %}</p>
+
+<h3>لیست توقف و شروع بکار</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>نوع عملیات</th>
+            <th>اپراتور</th>
+            <th>زمان</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for operation in operations %}
+        <tr style="color: {% if operation.type == 'Stop' %}red{% else %}black{% endif %};">
+            <td>{{ operation.get_type_display }}</td>
+            <td>{{ operation.operator }}</td>
+            <td>{{ operation.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>نوع خرابی‌های اعلام شده</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>نوع خرابی</th>
+            <th>توضیحات</th>
+            <th>گزارش شده توسط</th>
+            <th>زمان</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for failure in failures %}
+        <tr>
+            <td>{{ failure.type }}</td>
+            <td>{{ failure.description }}</td>
+            <td>{{ failure.reported_by }}</td>
+            <td>{{ failure.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
