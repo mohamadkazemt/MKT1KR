@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>پروفایل اپراتور - {{ operator.first_name }} {{ operator.last_name }}</h2>
+<p>کد پرسنلی: {{ operator.personnel_code }}</p>
+<p>نام: {{ operator.first_name }}</p>
+<p>نام خانوادگی: {{ operator.last_name }}</p>
+<p>شماره تماس: {{ operator.contact_number }}</p>
+<p>سمت: {{ operator.position }}</p>
+<p>گروه کاری: {{ operator.work_group }}</p>
+<p>دستگاه تحویلی: {{ operator.delivered_device }}</p>
+<img src="{{ operator.avatar.url }}" alt="Avatar" style="width: 150px; height: 150px;">
+
+<h3>دستگاه‌های اعلام خرابی کرده</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>نام دستگاه</th>
+            <th>نوع خرابی</th>
+            <th>تاریخ گزارش</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for report in failure_reports %}
+        <tr>
+            <td>{{ report.device_name }}</td>
+            <td>{{ report.failure_type }}</td>
+            <td>{{ report.report_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>تعداد بار ثبت شده برای اپراتور</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>تعداد بار</th>
+            <th>تاریخ گزارش</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for report in load_reports %}
+        <tr>
+            <td>{{ report.load_count }}</td>
+            <td>{{ report.report_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

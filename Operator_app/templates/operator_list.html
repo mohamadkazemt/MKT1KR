@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>لیست اپراتورها</h2>
+<a href="{% url 'operator_create' %}" class="btn btn-primary mb-3">ثبت اپراتور جدید</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>کد پرسنلی</th>
+            <th>نام</th>
+            <th>نام خانوادگی</th>
+            <th>شماره تماس</th>
+            <th>سمت</th>
+            <th>گروه کاری</th>
+            <th>دستگاه تحویلی</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for operator in operators %}
+        <tr>
+            <td>{{ operator.personnel_code }}</td>
+            <td>{{ operator.first_name }}</td>
+            <td>{{ operator.last_name }}</td>
+            <td>{{ operator.contact_number }}</td>
+            <td>{{ operator.position }}</td>
+            <td>{{ operator.work_group }}</td>
+            <td>{{ operator.delivered_device }}</td>
+            <td>
+                <a href="{% url 'operator_detail' operator.pk %}" class="btn btn-info btn-sm">مشاهده</a>
+                <a href="{% url 'operator_update' operator.pk %}" class="btn btn-warning btn-sm">ویرایش</a>
+                <a href="{% url 'operator_delete' operator.pk %}" class="btn btn-danger btn-sm">حذف</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

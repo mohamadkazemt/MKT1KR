@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Operator, Failure, Load
+from .models import Operator, FailureReport, LoadReport
 from .forms import OperatorForm
 
 def operator_list(request):
@@ -8,9 +8,9 @@ def operator_list(request):
 
 def operator_detail(request, pk):
     operator = get_object_or_404(Operator, pk=pk)
-    failures = operator.failures.all().order_by('-timestamp')
-    loads = operator.loads.all().order_by('-timestamp')
-    return render(request, 'operator_detail.html', {'operator': operator, 'failures': failures, 'loads': loads})
+    failure_reports = operator.failure_reports.all()
+    load_reports = operator.load_reports.all()
+    return render(request, 'operator_detail.html', {'operator': operator, 'failure_reports': failure_reports, 'load_reports': load_reports})
 
 def operator_create(request):
     if request.method == "POST":

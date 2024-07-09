@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{% if form.instance.pk %}ویرایش دستگاه{% else %}ثبت دستگاه جدید{% endif %}</h2>
-<form method="post">
+<h2>{% if form.instance.pk %}ویرایش اپراتور{% else %}ثبت اپراتور جدید{% endif %}</h2>
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">ذخیره</button>

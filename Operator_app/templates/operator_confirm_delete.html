@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>حذف اپراتور</h2>
+<p>آیا مطمئن هستید که می‌خواهید اپراتور {{ operator.first_name }} {{ operator.last_name }} را حذف کنید؟</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">حذف</button>
+    <a href="{% url 'operator_list' %}" class="btn btn-secondary">لغو</a>
+</form>
+{% endblock %}
