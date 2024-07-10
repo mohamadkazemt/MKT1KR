@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h2>پروفایل اپراتور</h2>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if operator.photo %}
+                        <img src="{{ operator.photo.url }}" alt="عکس اپراتور" class="img-fluid">
+                    {% else %}
+                        <img src="{% static 'images/default_avatar.png' %}" alt="عکس اپراتور" class="img-fluid">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h5 class="card-title">{{ operator.first_name }} {{ operator.last_name }}</h5>
+                    <p class="card-text"><strong>کد پرسنلی:</strong> {{ operator.personnel_code }}</p>
+                    <p class="card-text"><strong>شماره تماس:</strong> {{ operator.contact_number }}</p>
+                    <p class="card-text"><strong>سمت:</strong> {{ operator.position }}</p>
+                    <p class="card-text"><strong>گروه کاری:</strong> {{ operator.work_group }}</p>
+                    <p class="card-text"><strong>دستگاه تحویلی:</strong> {{ operator.delivered_device }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'operator_list' %}" class="btn btn-primary mt-3">بازگشت به لیست اپراتورها</a>
+</div>
+{% endblock %}

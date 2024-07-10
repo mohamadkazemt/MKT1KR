@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">لیست اپراتورها</h2>
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#operatorModal">
+        ثبت اپراتور جدید
+    </button>
+
+    <!-- جدول اپراتورها -->
+    <table class="table table-bordered table-hover mt-4">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">کد پرسنلی</th>
+                <th scope="col">نام</th>
+                <th scope="col">نام خانوادگی</th>
+                <th scope="col">شماره تماس</th>
+                <th scope="col">سمت</th>
+                <th scope="col">گروه کاری</th>
+                <th scope="col">دستگاه تحویلی</th>
+                <th scope="col">عکس</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody id="operator-list">
+            {% for operator in operators %}
+            <tr>
+                <td>{{ operator.personnel_code }}</td>
+                <td>{{ operator.first_name }}</td>
+                <td>{{ operator.last_name }}</td>
+                <td>{{ operator.contact_number }}</td>
+                <td>{{ operator.position }}</td>
+                <td>{{ operator.work_group }}</td>
+                <td>{{ operator.delivered_device }}</td>
+                <td>
+                    {% if operator.photo %}
+                        <img src="{{ operator.photo.url }}" alt="عکس اپراتور" width="50">
+                    {% else %}
+                        <img src="{% static 'images/default_avatar.png' %}" alt="عکس اپراتور" width="50">
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'operator_detail' operator.pk %}" class="btn btn-info btn-sm">مشاهده</a>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#operatorModal" data-id="{{ operator.pk }}" data-action="edit">ویرایش</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteOperatorModal" data-id="{{ operator.pk }}">حذف</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal ثبت و ویرایش اپراتور -->
+<div class="modal fade" id="operatorModal" tabindex="-1" aria-labelledby="operatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="operatorModalLabel">ثبت اپراتور جدید</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <div class="modal-body">
+                <form id="operator-form" method="post" enctype="multipart/form-data" action="">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="personnel_code" class="form-label">کد پرسنلی</label>
+                        <input type="text" class="form-control" id="personnel_code" name="personnel_code" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="first_name" class="form-label">نام</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="last_name" class="form-label">نام خانوادگی</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contact_number" class="form-label">شماره تماس</label>
+                        <input type="text" class="form-control" id="contact_number" name="contact_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="position" class="form-label">سمت</label>
+                        <input type="text" class="form-control" id="position" name="position" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="work_group" class="form-label">گروه کاری</label>
+                        <select class="form-control" id="work_group" name="work_group" required>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="delivered_device" class="form-label">دستگاه تحویلی</label>
+                        <input type="text" class="form-control" id="delivered_device" name="delivered_device" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">عکس اپراتور</label>
+                        <input type="file" class="form-control" id="photo" name="photo">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                        <button type="submit" class="btn btn-primary">ذخیره</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal حذف اپراتور -->
+<div class="modal fade" id="deleteOperatorModal" tabindex="-1" aria-labelledby="deleteOperatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteOperatorModalLabel">حذف اپراتور</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <div class="modal-body">
+                آیا مطمئن هستید که می‌خواهید این اپراتور را حذف کنید؟
+            </div>
+            <div class="modal-footer">
+                <form id="delete-operator-form" method="post" action="">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                    <button type="submit" class="btn btn-danger">حذف</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var operatorModal = document.getElementById('operatorModal');
+    operatorModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var operatorId = button.getAttribute('data-id');
+        var action = button.getAttribute('data-action');
+        var modalTitle = operatorModal.querySelector('.modal-title');
+        var form = document.getElementById('operator-form');
+
+        if (action === 'edit') {
+            modalTitle.textContent = 'ویرایش اپراتور';
+            form.action = '/operators/' + operatorId + '/edit/';
+            fetch('/operators/' + operatorId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('personnel_code').value = data.personnel_code;
+                    document.getElementById('first_name').value = data.first_name;
+                    document.getElementById('last_name').value = data.last_name;
+                    document.getElementById('contact_number').value = data.contact_number;
+                    document.getElementById('position').value = data.position;
+                    document.getElementById('work_group').value = data.work_group;
+                    document.getElementById('delivered_device').value = data.delivered_device;
+                });
+        } else {
+            modalTitle.textContent = 'ثبت اپراتور جدید';
+            form.action = '/operators/create/';
+            form.reset();
+        }
+    });
+
+    var deleteOperatorModal = document.getElementById('deleteOperatorModal');
+    deleteOperatorModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var operatorId = button.getAttribute('data-id');
+        var form = document.getElementById('delete-operator-form');
+        form.action = '/operators/' + operatorId + '/delete/';
+    });
+</script>
+
+{% endblock %}

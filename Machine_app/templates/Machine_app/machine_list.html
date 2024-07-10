@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">لیست دستگاه‌ها</h2>
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#machineModal">
+        ثبت دستگاه جدید
+    </button>
+
+    <!-- جدول دستگاه‌ها -->
+    <table class="table table-bordered table-hover mt-4">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">کد دستگاه</th>
+                <th scope="col">نام دستگاه</th>
+                <th scope="col">نوع دستگاه</th>
+                <th scope="col">وضعیت</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody id="machine-list">
+            {% for machine in machines %}
+            <tr>
+                <td>{{ machine.code }}</td>
+                <td>{{ machine.name }}</td>
+                <td>{{ machine.get_type_display }}</td>
+                <td>{% if machine.is_active %}فعال{% else %}غیرفعال{% endif %}</td>
+                <td>
+                    <a href="{% url 'machine_detail' machine.pk %}" class="btn btn-info btn-sm">مشاهده</a>
+                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#machineModal" data-id="{{ machine.pk }}" data-action="edit">ویرایش</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteMachineModal" data-id="{{ machine.pk }}">حذف</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal ثبت و ویرایش دستگاه -->
+<div class="modal fade" id="machineModal" tabindex="-1" aria-labelledby="machineModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="machineModalLabel">ثبت دستگاه جدید</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <div class="modal-body">
+                <form id="machine-form" method="post" action="">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="code" class="form-label">کد دستگاه</label>
+                        <input type="text" class="form-control" id="code" name="code" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">نام دستگاه</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">نوع دستگاه</label>
+                        <select class="form-control" id="type" name="type" required>
+                            <option value="Carrier">حمل کننده</option>
+                            <option value="Loader">بارکننده</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="is_active" class="form-label">وضعیت</label>
+                        <select class="form-control" id="is_active" name="is_active" required>
+                            <option value="true">فعال</option>
+                            <option value="false">غیرفعال</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                        <button type="submit" class="btn btn-primary">ذخیره</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal حذف دستگاه -->
+<div class="modal fade" id="deleteMachineModal" tabindex="-1" aria-labelledby="deleteMachineModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteMachineModalLabel">حذف دستگاه</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
+            </div>
+            <div class="modal-body">
+                آیا مطمئن هستید که می‌خواهید این دستگاه را حذف کنید؟
+            </div>
+            <div class="modal-footer">
+                <form id="delete-machine-form" method="post" action="">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                    <button type="submit" class="btn btn-danger">حذف</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var machineModal = document.getElementById('machineModal');
+    machineModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var machineId = button.getAttribute('data-id');
+        var action = button.getAttribute('data-action');
+        var modalTitle = machineModal.querySelector('.modal-title');
+        var form = document.getElementById('machine-form');
+
+        if (action === 'edit') {
+            modalTitle.textContent = 'ویرایش دستگاه';
+            form.action = '/machines/' + machineId + '/edit/';
+            fetch('/machines/' + machineId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('code').value = data.code;
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('type').value = data.type;
+                    document.getElementById('is_active').value = data.is_active;
+                });
+        } else {
+            modalTitle.textContent = 'ثبت دستگاه جدید';
+            form.action = '/machines/create/';
+            form.reset();
+        }
+    });
+
+    var deleteMachineModal = document.getElementById('deleteMachineModal');
+    deleteMachineModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var machineId = button.getAttribute('data-id');
+        var form = document.getElementById('delete-machine-form');
+        form.action = '/machines/' + machineId + '/delete/';
+    });
+</script>
+
+{% endblock %}

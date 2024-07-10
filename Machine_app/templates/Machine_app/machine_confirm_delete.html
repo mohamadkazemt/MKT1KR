@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>حذف دستگاه</h2>
+<p>آیا مطمئن هستید که می‌خواهید دستگاه {{ machine.name }} را حذف کنید؟</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">حذف</button>
+    <a href="{% url 'machine_list' %}" class="btn btn-secondary">لغو</a>
+</form>
+{% endblock %}

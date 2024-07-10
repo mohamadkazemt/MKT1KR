@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h2>پروفایل دستگاه</h2>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    {% if machine.type == "Carrier" %}
+                        <img src="{% static 'images/carrier_avatar.png' %}" alt="آواتار حمل کننده" class="img-fluid">
+                    {% elif machine.type == "Loader" %}
+                        <img src="{% static 'images/loader_avatar.png' %}" alt="آواتار بارکننده" class="img-fluid">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h5 class="card-title">{{ machine.name }}</h5>
+                    <p class="card-text"><strong>کد دستگاه:</strong> {{ machine.code }}</p>
+                    <p class="card-text"><strong>نوع دستگاه:</strong> {{ machine.get_type_display }}</p>
+                    <p class="card-text"><strong>وضعیت:</strong> {% if machine.is_active %}فعال{% else %}غیرفعال{% endif %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'machine_list' %}" class="btn btn-primary mt-3">بازگشت به لیست دستگاه‌ها</a>
+</div>
+{% endblock %}
